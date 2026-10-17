@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Chapter 19 — A Story Still in Progress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&family=Amiri:wght@400;700&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ===== CUSTOMIZE: palette ===== */
+:root{
+  --bg:#0c0b0a; --char:#181615; --line:#2c2926; --ivory:#f1e9da; --mute:#9b9287;
+  --j:#e8765a; --a1:#d9b25f; --n:#6fa89a; --a2:#a58fd0;
+  --serif:"Cormorant Garamond",Georgia,serif; --sans:"Jost",system-ui,sans-serif; --ar:"Amiri","Noto Naskh Arabic",serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);color-scheme:dark}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ivory);font-family:var(--sans);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.07;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1s steps(4) infinite}
+@keyframes grain{25%{transform:translate(-2%,1%)}50%{transform:translate(1%,-2%)}75%{transform:translate(2%,2%)}}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--a1);outline-offset:3px}
+.view{display:none;min-height:100svh;padding:56px 22px 110px;max-width:640px;margin:0 auto;animation:in .9s ease both}
+.view.on{display:block}
+@keyframes in{from{opacity:0;filter:blur(6px)}to{opacity:1;filter:none}}
+h2{font-family:var(--serif);font-weight:300;font-size:clamp(34px,9vw,52px);line-height:1.05;margin:0 0 8px;letter-spacing:.01em}
+.sub{color:var(--mute);margin:0 0 34px;font-size:15px;line-height:1.6}
+.btn{background:none;border:1px solid var(--ivory);padding:14px 30px;letter-spacing:.2em;font-size:12px;text-transform:uppercase;border-radius:0;transition:background .3s,color .3s}
+.btn:hover{background:var(--ivory);color:var(--bg)}
+
+/* ===== Intro ===== */
+#intro{position:fixed;inset:0;z-index:20;background:radial-gradient(ellipse at 50% 40%,#1b1815,var(--bg) 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+#intro.gone{opacity:0;visibility:hidden;transition:opacity 1.2s,visibility 1.2s}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#glow{position:absolute;width:70vmin;height:70vmin;border-radius:50%;background:radial-gradient(circle,rgba(217,178,95,.22),transparent 65%);opacity:0;transition:opacity 2s}
+#intro.lit #glow{opacity:1}
+.name{display:flex;gap:clamp(4px,2vw,16px);font-family:var(--serif);font-weight:300;font-size:clamp(84px,28vw,190px);line-height:1;position:relative}
+.name span{display:inline-block;opacity:0}
+.name .J{color:var(--j)} .name .A1{color:var(--a1)} .name .N{color:var(--n)} .name .A2{color:var(--a2)}
+.name .J.show{animation:J 1.3s cubic-bezier(.2,.8,.2,1) forwards}
+.name .A1.show{animation:A1 1.5s ease forwards}
+.name .N.show{animation:N 1.2s cubic-bezier(.2,.8,.2,1) forwards}
+.name .A2.show{animation:A2 1.4s cubic-bezier(.3,1.4,.5,1) forwards}
+@keyframes J{from{opacity:0;transform:translateY(60px) rotate(-8deg);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+@keyframes A1{from{opacity:0;transform:scale(1.6);filter:blur(16px);letter-spacing:.3em}to{opacity:1;transform:none;filter:none}}
+@keyframes N{from{opacity:0;transform:translateX(-70px) skewX(14deg)}to{opacity:1;transform:none}}
+@keyframes A2{from{opacity:0;transform:translateY(-90px)}to{opacity:1;transform:none}}
+.hb{font-family:var(--serif);font-style:italic;font-size:clamp(20px,5vw,28px);margin:22px 0 0;opacity:0;transition:opacity 1.4s;min-height:1.4em}
+.title{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--mute);margin-top:8px;opacity:0;transition:opacity 1.4s}
+#enter{margin-top:34px;opacity:0;pointer-events:none;transition:opacity 1.2s}
+#intro.done .hb,#intro.done .title,#intro.done #enter{opacity:1}
+#intro.done #enter{pointer-events:auto}
+#skip{position:absolute;top:calc(18px + env(safe-area-inset-top,0px));right:18px;background:none;border:0;color:var(--mute);font-size:12px;letter-spacing:.2em;text-transform:uppercase;padding:10px}
+
+/* ===== Nav ===== */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:10;display:none;justify-content:center;gap:6px;padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg) 40%)}
+nav.on{display:flex}
+nav button{background:none;border:0;padding:10px 9px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);border-bottom:1px solid transparent}
+nav button[aria-current=true]{color:var(--ivory);border-color:var(--a1)}
+
+/* ===== Letter ===== */
+#env{display:block;margin:30px auto;width:min(86%,340px);aspect-ratio:3/2;background:none;border:0;padding:0;position:relative;perspective:900px}
+#env .body{position:absolute;inset:0;background:var(--char);border:1px solid var(--line);box-shadow:0 30px 60px -30px #000}
+#env .flap{position:absolute;left:0;right:0;top:0;height:55%;background:#211e1b;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .9s cubic-bezier(.6,0,.2,1)}
+#env .seal{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;border-radius:50%;background:var(--j);display:grid;place-items:center;font-family:var(--serif);font-size:24px;color:var(--bg);z-index:2;transition:opacity .4s,transform .6s}
+#env .hint{position:absolute;left:0;right:0;bottom:-30px;text-align:center;font-size:12px;letter-spacing:.2em;color:var(--mute)}
+#env.open .flap{transform:rotateX(180deg)} #env.open .seal{opacity:0;transform:scale(.4)} #env.open .hint{display:none}
+#paper{display:none;margin-top:24px;padding:34px 26px;background:#efe6d3;color:#24201b;border-radius:2px;box-shadow:0 30px 70px -30px #000;direction:rtl;text-align:right;font-family:var(--ar);font-size:clamp(20px,5.2vw,24px);line-height:2.15;animation:rise 1.2s cubic-bezier(.2,.8,.2,1) both}
+#paper.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(80px)}to{opacity:1;transform:none}}
+
+/* ===== Music ===== */
+.eq{display:flex;gap:4px;align-items:flex-end;height:36px;margin:0 0 28px}
+.eq i{width:3px;background:var(--a1);height:100%;transform-origin:bottom;animation:eq 1.2s ease-in-out infinite;opacity:.8}
+@keyframes eq{0%,100%{transform:scaleY(.2)}50%{transform:scaleY(1)}}
+.player{border:1px solid var(--line);background:var(--char);padding:10px;border-radius:14px}
+.player iframe{width:100%;height:152px;border:0;display:block;border-radius:10px}
+.fallback{margin-top:16px;font-size:14px;color:var(--mute)} .fallback a{color:var(--a1)}
+
+/* ===== List ===== */
+.prog{height:1px;background:var(--line);margin:6px 0 6px}.prog b{display:block;height:1px;background:var(--a1);width:0;transition:width .6s}
+.stat{font-size:13px;color:var(--mute);margin:0 0 28px}
+.add{display:grid;gap:10px;margin-bottom:30px}
+.add .row{display:flex;gap:10px;flex-wrap:wrap}
+input,select{background:transparent;border:0;border-bottom:1px solid var(--line);color:var(--ivory);font:inherit;font-size:16px;padding:10px 2px;border-radius:0;min-width:0;color-scheme:dark}
+input[type=text]{width:100%;font-family:var(--serif);font-size:22px}
+.add .row>*{flex:1 1 130px}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line)}
+li .tick{flex:none;width:22px;height:22px;margin-top:3px;border:1px solid var(--mute);border-radius:50%;background:none;padding:0;display:grid;place-items:center}
+li.done .tick{background:var(--a1);border-color:var(--a1)} li.done .tick::after{content:"";width:6px;height:11px;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+li .t{flex:1;min-width:0}
+li .txt{font-family:var(--serif);font-size:22px;line-height:1.25;overflow-wrap:anywhere;background:none;border:0;padding:0;text-align:left;width:100%}
+li.done .txt{color:var(--mute);text-decoration:line-through;text-decoration-color:var(--a1)}
+li .meta{font-size:12px;color:var(--mute);margin-top:4px;letter-spacing:.05em}
+li .x{background:none;border:0;color:var(--mute);font-size:20px;padding:2px 8px;line-height:1}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.filters button{background:none;border:0;color:var(--mute);font-size:12px;letter-spacing:.12em;padding:8px 10px 8px 0}
+.filters button[aria-pressed=true]{color:var(--ivory)}
+.empty{color:var(--mute);font-family:var(--serif);font-style:italic;font-size:20px;padding:24px 0}
+.tools{margin-top:28px;display:flex;gap:14px;align-items:center}
+.tools button{background:none;border:0;color:var(--mute);font-size:12px;letter-spacing:.15em;text-transform:uppercase;border-bottom:1px solid var(--line);padding:6px 0}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ivory);color:var(--bg);padding:10px 18px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:60}
+#toast.on{opacity:1}
+/* ===== Celebration room ===== */
+#play .cake{display:block;margin:0 auto 8px;width:min(70%,260px);background:none;border:0;padding:0}
+#play .flame,#play .glow2{opacity:0;transform-origin:100px 42px}
+#candle.lit .flame{opacity:1;animation:fl .18s ease-in-out infinite alternate}
+#candle.lit .glow2{opacity:.35}
+@keyframes fl{from{transform:scale(1,1) rotate(-3deg)}to{transform:scale(.88,1.1) rotate(3deg)}}
+#cakeMsg{text-align:center;font-family:var(--serif);font-style:italic;font-size:22px;margin:0 0 18px}
+.wishbox{display:grid;gap:14px;margin-bottom:34px;justify-items:center}
+.wishbox[hidden]{display:none}
+.stagewrap{border:1px solid var(--line);background:radial-gradient(ellipse at 50% 100%,#1d1a17,var(--char));position:relative;margin-top:30px}
+#stage{display:block;width:100%;height:260px;touch-action:manipulation}
+.stagewrap .cap{position:absolute;left:0;right:0;top:12px;text-align:center;font-size:12px;letter-spacing:.2em;color:var(--mute);pointer-events:none}
+.stagebtns{display:flex;justify-content:center;margin-top:18px}
+.fallback.warn{border:1px solid var(--line);background:var(--char);padding:16px;border-radius:10px;color:var(--ivory)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  body::after{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 1. INTRO ===== -->
+<section id="intro" aria-label="Introduction">
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <button id="skip" type="button">Skip</button>
+  <div id="glow" aria-hidden="true"></div>
+  <h1 class="name" aria-label="Jana"><span class="J">J</span><span class="A1">A</span><span class="N">N</span><span class="A2">A</span></h1>
+  <p class="hb">Happy 19th birthday, Jana</p>
+  <p class="title">Chapter 19 — A story still in progress</p>
+  <button id="enter" class="btn" type="button">Enter your chapter</button>
+</section>
+
+<!-- ===== 2. LETTER ===== -->
+<main>
+<section id="letter" class="view" aria-label="Letter">
+  <h2>A letter, for you.</h2>
+  <p class="sub">Tap the seal to open it.</p>
+  <button id="env" type="button" aria-expanded="false" aria-controls="paper" aria-label="Open the letter">
+    <span class="body"></span><span class="flap"></span><span class="seal" aria-hidden="true">J</span><span class="hint">tap to open</span>
+  </button>
+  <!-- ===== CUSTOMIZE: letter text (kept exactly as written) ===== -->
+  <article id="paper" lang="ar" dir="rtl"><p>كل سنه وانتي طيبة يا روحي، انا فخور اني معاكي ، دي حاجة بتاكد منها كل فتره بالذات لما شوفتك ، اتاكدت اني محظوظ بغباء اني اعرفك ، عشان لقيت انك خلتيني مرتاح اتكلم و احكي و ارغي من غير ما اسكت كاننا بنتقابل كل يوم و ده العادي بتاعنا ، مكنتش محتاج غير اني اشوف عينك عامة و انتي بتضحكي عشان ابقي مبسوط كده، كنت فرحان برضو لما اكتشفت انه ضحكتك حلوه فشخ زي صوتك وانتي بتتكلمي معايا كول، بعيدا عن ده أنا علطول فخور بيكي اوي بصراحة من اول ما عرفتك و شوفت قد ايه انتي بتفرقي في حياه اي حد تعرفيه مش أنا بس حتي صحابك دايما بشوفهم محتاجين وجودك في حياتهم و عندهم حق في ده لاني أنا مفتكرش اني بلاقي حد وجوده بيبقي كفاية يفرق معايا من غير ما يحتاج يعمل مجهود حتي قدك، أنا بحبك اوي يا جنى</p></article>
+</section>
+
+<!-- ===== 3. MUSIC ===== -->
+<section id="music" class="view" aria-label="Soundtrack">
+  <div class="eq" aria-hidden="true"></div>
+  <h2>The soundtrack.</h2>
+  <p class="sub">Press play. Spotify may ask you to log in for the full track.</p>
+  <!-- ===== CUSTOMIZE: track ID ===== -->
+  <div class="player"><iframe id="sp" title="Spotify player" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/track/4szr7oBBb8SDGJt1gz7XzG?utm_source=generator&theme=0"></iframe></div>
+  <p class="fallback" id="spfb"><span>Player not showing?</span> <a href="https://open.spotify.com/track/4szr7oBBb8SDGJt1gz7XzG" target="_blank" rel="noopener">Open the track in Spotify</a>.</p>
+</section>
+
+<!-- ===== CELEBRATION ROOM ===== -->
+<section id="play" class="view" aria-label="Celebration room">
+  <h2>The celebration room.</h2>
+  <p class="sub">A quiet corner to play in. Light the candle, make a wish, set off something bright.</p>
+  <button id="candle" class="cake" type="button" aria-label="Light the candle">
+    <svg viewBox="0 0 200 180" width="100%" aria-hidden="true">
+      <circle class="glow2" cx="100" cy="34" r="34" fill="#d9b25f"/>
+      <ellipse cx="100" cy="166" rx="90" ry="9" fill="#181615" stroke="#2c2926"/>
+      <rect x="36" y="106" width="128" height="58" rx="4" fill="#2a2623"/>
+      <rect x="36" y="106" width="128" height="15" fill="#f1e9da"/>
+      <rect x="60" y="70" width="80" height="37" rx="4" fill="#34302b"/>
+      <rect x="60" y="70" width="80" height="12" fill="#f1e9da"/>
+      <circle cx="58" cy="140" r="4" fill="#e8765a"/><circle cx="89" cy="146" r="4" fill="#d9b25f"/><circle cx="118" cy="140" r="4" fill="#6fa89a"/><circle cx="146" cy="146" r="4" fill="#a58fd0"/>
+      <rect x="96.5" y="46" width="7" height="25" fill="#d9b25f"/>
+      <path class="flame" d="M100 20 C93 30 94 42 100 44 C106 42 107 30 100 20Z" fill="#e8765a"/>
+    </svg>
+  </button>
+  <p id="cakeMsg" aria-live="polite">Tap the candle to light it.</p>
+  <div class="wishbox" id="wishBox" hidden>
+    <input id="wish" type="text" placeholder="Your wish stays private…" maxlength="200" aria-label="Your wish">
+    <button id="blow" class="btn" type="button">Blow it out</button>
+  </div>
+  <div class="stagewrap"><canvas id="stage" role="img" aria-label="Fireworks stage. Tap anywhere to set off a firework."></canvas><div class="cap">Tap anywhere</div></div>
+  <div class="stagebtns"><button id="pop" class="btn" type="button">Pop confetti</button></div>
+</section>
+
+<!-- ===== 4. BUCKET LIST ===== -->
+<section id="list" class="view" aria-label="Bucket list">
+  <h2>Before chapter 20</h2>
+  <p class="sub">Everything you want to do in your nineteenth year. Write as much, or as little, as you like.</p>
+  <div class="prog" aria-hidden="true"><b id="bar"></b></div>
+  <p class="stat" id="stat" aria-live="polite"></p>
+  <div class="add">
+    <input id="newText" type="text" placeholder="I want to…" aria-label="New activity" maxlength="200" enterkeyhint="done">
+    <div class="row">
+      <input id="newCat" type="text" list="cats" placeholder="Category (optional)" aria-label="Category" maxlength="30" style="font-size:16px;font-family:var(--sans)">
+      <datalist id="cats"></datalist>
+      <input id="newDate" type="date" aria-label="Date (optional)">
+      <button id="addBtn" class="btn" type="button">Add</button>
+    </div>
+  </div>
+  <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+  <ul id="items"></ul>
+  <div class="tools"><button id="exp" type="button">Export list</button><span style="font-size:12px;color:var(--mute)">Saved on this device only.</span></div>
+</section>
+</main>
+
+<nav id="nav" aria-label="Sections">
+  <button data-go="letter" type="button">Letter</button>
+  <button data-go="music" type="button">Soundtrack</button>
+  <button data-go="play" type="button">Celebrate</button>
+  <button data-go="list" type="button">Before 20</button>
+</nav>
+<div id="toast" role="status"></div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const wait=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2200)};
+
+/* ---- equalizer bars ---- */
+const eq=$(".eq");for(let i=0;i<28;i++){const b=document.createElement("i");b.style.animationDelay=(-Math.random()*1.2)+"s";b.style.animationDuration=(.7+Math.random()*.9)+"s";eq.appendChild(b)}
+
+/* ---- confetti (restrained, palette-matched) ---- */
+const cv=$("#fx"),cx=cv.getContext("2d");let parts=[],raf;
+const cols=["#e8765a","#d9b25f","#6fa89a","#a58fd0","#f1e9da"];
+function size(){const d=devicePixelRatio||1;cv.width=innerWidth*d;cv.height=innerHeight*d;cx.setTransform(d,0,0,d,0,0)}
+addEventListener("resize",size);size();
+function burst(){
+  if(reduce)return;
+  for(let i=0;i<110;i++){const s=i%2?1:-1;parts.push({x:innerWidth/2+s*20,y:innerHeight*.45,vx:s*(Math.random()*6+1),vy:-(Math.random()*10+3),w:3+Math.random()*4,h:6+Math.random()*7,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:cols[i%5],a:1})}
+  if(!raf)loop();
+}
+function loop(){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  parts=parts.filter(p=>p.a>.02);
+  for(const p of parts){p.vy+=.22;p.vx*=.985;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;if(p.y>innerHeight*.6)p.a-=.02;
+    cx.save();cx.globalAlpha=Math.max(p.a,0);cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore()}
+  raf=parts.length?requestAnimationFrame(loop):0;
+}
+
+/* ---- intro sequence ---- */
+let skipped=false;
+async function intro(){
+  await wait(900);$("#intro").classList.add("lit");
+  for(const el of $$(".name span")){if(skipped)return;el.classList.add("show");await wait(750)}
+  await wait(900);if(skipped)return;
+  burst();$("#intro").classList.add("done");
+}
+function finishIntro(){skipped=true;$$(".name span").forEach(e=>e.classList.add("show"));$("#intro").classList.add("lit","done")}
+$("#skip").onclick=()=>{finishIntro();enter()};
+$("#enter").onclick=enter;
+function enter(){$("#intro").classList.add("gone");$("#nav").classList.add("on");go("letter");setTimeout(()=>$("#intro").style.display="none",1300)}
+
+/* ---- navigation ---- */
+function go(id){
+  $$(".view").forEach(v=>v.classList.toggle("on",v.id===id));
+  $$("#nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===id));
+  scrollTo(0,0);
+  if(id==="play")requestAnimationFrame(ssize);
+}
+$$("#nav button").forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* ---- letter ---- */
+$("#env").onclick=e=>{
+  const env=e.currentTarget;if(env.classList.contains("open"))return;
+  env.classList.add("open");env.setAttribute("aria-expanded","true");
+  setTimeout(()=>{$("#paper").classList.add("on");$("#paper").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"})},reduce?0:700);
+};
+
+/* ---- bucket list ---- */
+const KEY="jana-chapter-19";let items=[],filter="All";
+try{items=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){items=[]}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){toast("Couldn’t save on this browser")}};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function render(){
+  const done=items.filter(i=>i.done).length,pct=items.length?Math.round(done/items.length*100):0;
+  $("#bar").style.width=pct+"%";
+  $("#stat").textContent=items.length?`${done} of ${items.length} done`:"Nothing here yet.";
+  const cats=[...new Set(items.map(i=>i.cat).filter(Boolean))];
+  if(filter!=="All"&&!cats.includes(filter))filter="All";
+  $("#cats").innerHTML="";cats.forEach(c=>{const o=document.createElement("option");o.value=c;$("#cats").appendChild(o)});
+  const f=$("#filters");f.innerHTML="";
+  if(cats.length)["All",...cats].forEach(c=>{const b=document.createElement("button");b.type="button";b.textContent=c;b.setAttribute("aria-pressed",c===filter);b.onclick=()=>{filter=c;render()};f.appendChild(b)});
+  const ul=$("#items");ul.innerHTML="";
+  const shown=items.filter(i=>filter==="All"||i.cat===filter);
+  if(!shown.length){const p=document.createElement("li");p.className="empty";p.textContent="The page is blank. Start with something small.";ul.appendChild(p);return}
+  shown.forEach(it=>{
+    const li=document.createElement("li");if(it.done)li.className="done";
+    const tick=document.createElement("button");tick.className="tick";tick.type="button";tick.setAttribute("role","checkbox");tick.setAttribute("aria-checked",it.done);tick.setAttribute("aria-label","Mark done");
+    tick.onclick=()=>{it.done=!it.done;save();render()};
+    const t=document.createElement("div");t.className="t";
+    const txt=document.createElement("button");txt.className="txt";txt.type="button";txt.textContent=it.text;txt.title="Tap to edit";
+    txt.onclick=()=>edit(it,t,txt);
+    const meta=document.createElement("div");meta.className="meta";
+    const bits=[];if(it.cat)bits.push(it.cat);if(it.date){const d=new Date(it.date+"T00:00:00");bits.push(isNaN(d)?it.date:d.toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"}))}
+    meta.textContent=bits.join("  ·  ");
+    t.append(txt);if(bits.length)t.append(meta);
+    const x=document.createElement("button");x.className="x";x.type="button";x.textContent="×";x.setAttribute("aria-label","Delete: "+it.text);
+    x.onclick=()=>{items=items.filter(i=>i.id!==it.id);save();render()};
+    li.append(tick,t,x);ul.appendChild(li);
+  });
+}
+function edit(it,t,txt){
+  const inp=document.createElement("input");inp.type="text";inp.value=it.text;inp.maxLength=200;inp.setAttribute("aria-label","Edit activity");
+  const d=document.createElement("input");d.type="date";d.value=it.date||"";d.setAttribute("aria-label","Date");d.style.fontSize="14px";
+  const commit=()=>{const v=inp.value.trim();if(v){it.text=v;it.date=d.value}save();render()};
+  const wrap=document.createElement("div");wrap.append(inp,d);
+  t.replaceChildren(wrap);inp.focus();
+  inp.onkeydown=e=>{if(e.key==="Enter")commit();if(e.key==="Escape")render()};
+  wrap.addEventListener("focusout",e=>{if(!wrap.contains(e.relatedTarget))commit()});
+}
+function add(){
+  const text=$("#newText").value.trim();if(!text){$("#newText").focus();return}
+  items.unshift({id:uid(),text,cat:$("#newCat").value.trim(),date:$("#newDate").value,done:false});
+  $("#newText").value="";$("#newDate").value="";save();render();$("#newText").focus();
+}
+$("#addBtn").onclick=add;$("#newText").onkeydown=e=>{if(e.key==="Enter")add()};
+$("#exp").onclick=async()=>{
+  if(!items.length){toast("Add something first");return}
+  const txt="Before chapter 20\n\n"+items.map(i=>`[${i.done?"x":" "}] ${i.text}${i.cat?" ("+i.cat+")":""}${i.date?" — "+i.date:""}`).join("\n");
+  try{await navigator.clipboard.writeText(txt);toast("Copied to clipboard — paste it anywhere")}
+  catch(e){try{const b=new Blob([txt],{type:"text/plain"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="before-chapter-20.txt";a.click();toast("Exporting…")}catch(_){toast("Export isn’t available here")}}
+};
+/* ---- Spotify: detect a blocked embed and say so ---- */
+document.addEventListener("securitypolicyviolation",e=>{
+  if(/frame/.test(e.violatedDirective)){const f=$("#spfb");f.classList.add("warn");f.querySelector("span").textContent="Spotify’s player is blocked inside this preview window. It plays on the page once it’s hosted (GitHub Pages or Cloudflare Pages). Until then:"}
+});
+
+/* ---- celebration room ---- */
+const st=$("#stage"),sx=st.getContext("2d");let sp=[],sraf=0;
+function ssize(){const r=st.getBoundingClientRect(),d=devicePixelRatio||1;st.width=r.width*d;st.height=r.height*d;sx.setTransform(d,0,0,d,0,0)}
+addEventListener("resize",ssize);
+function run(){if(!sraf)sraf=requestAnimationFrame(tick)}
+function spark(x,y){
+  if(reduce){toast("Motion is reduced on this device");return}
+  const c=cols[Math.floor(Math.random()*4)];
+  for(let i=0;i<46;i++){const a=Math.PI*2*i/46,s=1.5+Math.random()*3.2;sp.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,a:1,c,w:2,k:0})}
+  run();
+}
+function pop(){
+  if(reduce)return;const w=st.clientWidth,h=st.clientHeight;
+  for(let i=0;i<90;i++)sp.push({x:Math.random()*w,y:h+5,vx:(Math.random()-.5)*3,vy:-(7+Math.random()*7),a:1,c:cols[i%5],w:3+Math.random()*3,k:1,r:Math.random()*6});
+  run();
+}
+function tick(){
+  const w=st.clientWidth,h=st.clientHeight;sx.clearRect(0,0,w,h);
+  sp=sp.filter(p=>p.a>.03&&p.y<h+20);
+  for(const p of sp){
+    p.vy+=p.k?.2:.06;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.a-=p.k?.006:.014;
+    sx.globalAlpha=Math.max(p.a,0);sx.fillStyle=p.c;
+    if(p.k){sx.save();sx.translate(p.x,p.y);sx.rotate(p.r+=.1);sx.fillRect(-p.w/2,-p.w,p.w,p.w*2);sx.restore()}
+    else{sx.beginPath();sx.arc(p.x,p.y,p.w,0,7);sx.fill()}
+  }
+  sx.globalAlpha=1;sraf=sp.length?requestAnimationFrame(tick):0;
+}
+st.addEventListener("pointerdown",e=>{const r=st.getBoundingClientRect();spark(e.clientX-r.left,e.clientY-r.top)});
+$("#pop").onclick=pop;
+const cd=$("#candle");let lit=false;
+cd.onclick=()=>{
+  if(lit)return;lit=true;cd.classList.add("lit");cd.setAttribute("aria-label","Candle lit");
+  $("#cakeMsg").textContent="Make a wish, then blow it out.";$("#wishBox").hidden=false;$("#wish").focus({preventScroll:true});
+};
+$("#blow").onclick=()=>{
+  const w=$("#wish").value.trim();if(w){try{localStorage.setItem("jana-wish",w)}catch(e){}}
+  lit=false;cd.classList.remove("lit");cd.setAttribute("aria-label","Light the candle");
+  $("#wish").value="";$("#wishBox").hidden=true;$("#cakeMsg").textContent="Wish sealed. Tap the candle to make another.";
+  $("#stage").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});
+  ssize();setTimeout(()=>{pop();spark(st.clientWidth*.3,90);setTimeout(()=>spark(st.clientWidth*.7,110),350)},reduce?0:500);
+};
+render();intro();
+})();
+</script>
+</body>
+</html>
